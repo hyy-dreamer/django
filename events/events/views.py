@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 import calendar
 from calendar import HTMLCalendar, month_name
 from datetime import datetime
-from events.forms import VenueForm
+from events.forms import EventForm, VenueForm
 from events.models import Event, Venue
 
 # Create calendar views here.
@@ -42,6 +42,23 @@ def all_events(request):
         "event_list": event_list
     }
     return render(request, 'events/event_list.html', context)
+
+
+
+# Create add event views
+def add_event(request):
+    context = {}
+    submitted = False
+    if request.method == "POST":
+        form = EventForm(request.POST)
+        if form.is_valid:
+            form.save()
+            return HttpResponseRedirect('/add_event?submitted=True')
+    else:
+        form = EventForm
+        if 'submitted' in request.GET:
+            submitted = True
+    return render(request, 'events/add_event.html', {"form": form, "submitted": submitted})
 
 # Create all_venue views
 def all_venues(request):
