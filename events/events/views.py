@@ -60,6 +60,23 @@ def add_event(request):
             submitted = True
     return render(request, 'events/add_event.html', {"form": form, "submitted": submitted})
 
+
+# Create update_event views
+def update_event(request,event_id):
+    context={}
+    events = Event.objects.get(pk=event_id)
+    if request.method == "POST":
+        form = EventForm(request.POST,instance=events)
+        if form.is_valid:
+            form.save()
+            return redirect('list-events')
+    else:
+        form = EventForm(instance=events)
+        context = {
+            "form": form
+        }
+        return render(request, 'events/update_event.html', context)
+
 # Create all_venue views
 def all_venues(request):
     context = {}
