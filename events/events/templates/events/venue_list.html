@@ -14,6 +14,7 @@
     <td align = "right">
         <a href="{% url 'update-venue' venue.id %}" type="button" class="btn btn-outline-secondary btn-sm">Update</a>
         <a href="{% url 'delete-venue' venue.id %}" type="button" class="btn btn-outline-danger btn-sm">Delete</a>
+        <a href="{% url 'venue-text' venue.id %}" type="button" class="btn btn-outline-info btn-sm">Download</a>
     </td>
 </tr>
 {% endfor %}

@@ -1,5 +1,4 @@
-from multiprocessing import context
-from multiprocessing.synchronize import Event
+from inspect import ismethoddescriptor
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 import calendar
@@ -7,6 +6,12 @@ from calendar import HTMLCalendar, month_name
 from datetime import datetime
 from events.forms import EventForm, VenueForm
 from events.models import Event, Venue
+from django.http import HttpResponse
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+import io
 
 # Create calendar views here.
 def home(request, year=datetime.now().year, month=datetime.now().strftime('%B')):
@@ -37,7 +42,7 @@ def home(request, year=datetime.now().year, month=datetime.now().strftime('%B'))
 # Create event_list views 
 def all_events(request):
     context = {}
-    event_list = Event.objects.all()
+    event_list = Event.objects.all().order_by('-event_date')
     context = {
         "event_list": event_list
     }
@@ -87,7 +92,7 @@ def delete_event(request,event_id):
 # Create all_venue views
 def all_venues(request):
     context = {}
-    venue_list = Venue.objects.all()
+    venue_list = Venue.objects.all().order_by('-name')
     context = {
         "venue_list": venue_list
     }
@@ -154,3 +159,36 @@ def delete_venue(request, venue_id):
     venues = Venue.objects.get(pk=venue_id)
     venues.delete()
     return redirect('list-venues')
+
+def venue_text(request,venue_id):
+    response = HttpResponse(content_type = 'text/plain')
+    response['Content-Disposition'] = 'attachment; filename=venue.txt' 
+    venue = Venue.objects.get(pk=venue_id)
+    lines = []
+    lines.append(f'{venue}\n {venue.address}\n {venue.zip_code}\n {venue.phone}\n {venue.web}\n {venue.email_address}\n')
+    response.writelines(lines)
+    return response
+
+def event_pdf(request):
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    textob = c.beginText()
+    textob.setTextOrigin(inch,inch)
+    textob.setFont("Helvetica", 14)
+    lines = []
+    events = Event.objects.all()
+    for event in events:
+        lines.append("Event Name:" + event.name)
+        #lines.append(event.event_date)
+        lines.append("Venue Name:" + event.venue.name)
+        # lines.append(event.manager)
+        lines.append("Description:" + event.description)
+        lines.append("========================================")
+        # lines.append(event.attendees.all)
+    for line in lines:
+        textob.textLine(line)
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+    return FileResponse(buf, as_attachment=True, filename='events.pdf')
