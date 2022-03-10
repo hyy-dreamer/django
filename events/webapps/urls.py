@@ -33,4 +33,5 @@ urlpatterns = [
     path('delete_venue/<venue_id>', views.delete_venue, name="delete-venue"),
     path('venue_text/<venue_id>', views.venue_text, name="venue-text"),
     path('event_pdf', views.event_pdf, name="event-pdf"),
+    path('get_location', views.get_location, name="get-location"),
 ]

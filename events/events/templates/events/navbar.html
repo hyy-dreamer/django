@@ -22,6 +22,9 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'event-pdf' %}">Download Events</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'get-location' %}">Location</a>
+          </li>
         </ul>
         <form class="d-flex" method="post" action="{% url 'search-venues' %}">
             {% csrf_token %}

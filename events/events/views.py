@@ -192,3 +192,6 @@ def event_pdf(request):
     c.save()
     buf.seek(0)
     return FileResponse(buf, as_attachment=True, filename='events.pdf')
+
+def get_location(request):
+    return render(request, 'events/my_location.html')
