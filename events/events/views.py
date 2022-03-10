@@ -77,6 +77,13 @@ def update_event(request,event_id):
         }
         return render(request, 'events/update_event.html', context)
 
+# Create delete_event views
+def delete_event(request,event_id):
+    events = Event.objects.get(pk=event_id)
+    events.delete()
+    return redirect('list-events')
+
+
 # Create all_venue views
 def all_venues(request):
     context = {}
@@ -141,3 +148,9 @@ def update_venue(request, venue_id):
             "form": form
         }
         return render(request, 'events/update_venue.html', context)
+
+# Create delete venue views
+def delete_venue(request, venue_id):
+    venues = Venue.objects.get(pk=venue_id)
+    venues.delete()
+    return redirect('list-venues')
