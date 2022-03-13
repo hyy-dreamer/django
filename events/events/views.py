@@ -12,6 +12,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 import io
+from django.core.paginator import Paginator
 
 # Create calendar views here.
 def home(request, year=datetime.now().year, month=datetime.now().strftime('%B')):
@@ -92,9 +93,16 @@ def delete_event(request,event_id):
 # Create all_venue views
 def all_venues(request):
     context = {}
-    venue_list = Venue.objects.all().order_by('-name')
+    # venue_list = Venue.objects.all().order_by('-name')
+    venue_list = Venue.objects.all()
+    p = Paginator(venue_list, 2)
+    page = request.GET.get('page')
+    venues = p.get_page(page)
+    nums = "a" * venues.paginator.num_pages
     context = {
-        "venue_list": venue_list
+        "venue_list": venue_list,
+        "venues": venues,
+        "nums":nums,
     }
     return render(request, 'events/venue_list.html', context)
 

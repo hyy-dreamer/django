@@ -35,3 +35,7 @@ urlpatterns = [
     path('event_pdf', views.event_pdf, name="event-pdf"),
     path('get_location', views.get_location, name="get-location"),
 ]
+
+admin.site.site_header = "CMU Social Map Administration Page"
+admin.site.site_title = "Social Map"
+admin.site.index_title = "Welcome to Admin Area"
