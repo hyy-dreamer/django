@@ -13,6 +13,8 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 import io
 from django.core.paginator import Paginator
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 # Create calendar views here.
 def home(request, year=datetime.now().year, month=datetime.now().strftime('%B')):
@@ -203,3 +205,23 @@ def event_pdf(request):
 
 def get_location(request):
     return render(request, 'events/my_location.html')
+
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password = password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.success(request, ("Pleased make sure you are registered!"))
+            return redirect('login-user')
+    else: return render(request, 'events/login.html')
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, ("You were logged out"))
+    return redirect('login-user')
+
