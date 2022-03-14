@@ -34,6 +34,8 @@ urlpatterns = [
     path('venue_text/<venue_id>', views.venue_text, name="venue-text"),
     path('event_pdf', views.event_pdf, name="event-pdf"),
     path('get_location', views.get_location, name="get-location"),
+    path('login_user', views.login_user, name="login-user"),
+    path('logout_user', views.logout_user, name="logout-user"),
 ]
 
 admin.site.site_header = "CMU Social Map Administration Page"
