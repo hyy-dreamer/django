@@ -1,8 +1,8 @@
-from asyncio import events
-from tkinter import Widget
 from django import forms
 from django.forms import ModelForm
 from events.models import *
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 # create a venue form
 class VenueForm(ModelForm):
@@ -49,3 +49,24 @@ class EventForm(ModelForm):
             'attendees':forms.SelectMultiple(attrs={'class':'form-select','placeholder':'Enter attendees'}),
             'description':forms.Textarea(attrs={'class':'form-control','placeholder':'Enter Description'}),
         }
+
+# Create a registration form
+class RegisterUserForm(UserCreationForm):#inheriate from UserCreationForm
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'Enter Email Address'}))
+    first_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Enther First Name'}))
+    last_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Enther Last Name'}))
+
+    class Meta:
+        model = User
+        fields = ('username','first_name','last_name','email','password1','password2')
+        
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterUserForm,self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].widget.attrs['placeholder'] = 'Enter Username'
+        self.fields['password1'].widget.attrs['class'] = 'form-control'
+        self.fields['password1'].widget.attrs['placeholder'] = 'Enter Password'
+        self.fields['password2'].widget.attrs['class'] = 'form-control'
+        self.fields['password2'].widget.attrs['placeholder'] = 'Enter Password Confirmation'
+    

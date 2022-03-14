@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 import calendar
 from calendar import HTMLCalendar, month_name
 from datetime import datetime
-from events.forms import EventForm, VenueForm
+from events.forms import EventForm, RegisterUserForm, VenueForm
 from events.models import Event, Venue
 from django.http import HttpResponse
 from django.http import FileResponse
@@ -15,6 +15,7 @@ import io
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 
 # Create calendar views here.
 def home(request, year=datetime.now().year, month=datetime.now().strftime('%B')):
@@ -224,4 +225,20 @@ def logout_user(request):
     logout(request)
     messages.success(request, ("You were logged out"))
     return redirect('login-user')
+
+def register_user(request):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(username = username, password = password)
+            login(request, user)
+            messages.success(request, ("Register successfully!"))
+            return redirect('home')
+        else: return render(request, 'events/register.html',{'form':form})
+    else:
+        form = RegisterUserForm()
+        return render(request, 'events/register.html',{'form':form})
 
